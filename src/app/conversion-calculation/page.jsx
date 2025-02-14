@@ -1,7 +1,10 @@
 "use client"
 
 import CategoryPage from "../../components/CategoryPage"
+import NavigationArrows from "../../components/NavigationArrows"
 import { Calculator, Repeat, DollarSign, Activity, Calendar } from "lucide-react"
+import Navbar from "../../components/Navbar"
+import Footer from "../../components/Footer"
 
 const tools = [
   {
@@ -44,10 +47,15 @@ const tools = [
 
 export default function ConversionCalculation() {
   return (
-    <CategoryPage
-      title="Conversion and Calculation Tools"
-      description="Powerful tools for quick conversions and complex calculations"
-      tools={tools}
-    />
+    <div className="relative">
+      <Navbar />
+      <CategoryPage
+        title="Conversion and Calculation Tools"
+        description="Powerful tools for quick conversions and complex calculations"
+        tools={tools}
+      />
+      <NavigationArrows backLink="/" />
+      <Footer />
+    </div>
   )
 }

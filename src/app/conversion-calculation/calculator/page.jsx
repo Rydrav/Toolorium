@@ -1,9 +1,10 @@
 "use client"
 
-import { motion, useScroll } from "framer-motion"
+import { motion } from "framer-motion"
 import Link from "next/link"
-import { ChevronUp, ArrowLeft, Calculator } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Calculator } from "lucide-react"
+import { useEffect } from "react"
+import NavigationArrows from "../../../components/NavigationArrows"
 import Navbar from "../../../components/Navbar"
 import Footer from "../../../components/Footer"
 
@@ -23,35 +24,9 @@ const tools = [
 ]
 
 export default function CalculatorPage() {
-  const { scrollY } = useScroll()
-  const [showScrollTop, setShowScrollTop] = useState(false)
-
-  useEffect(() => {
-    const updateScrollTopButton = () => {
-      if (scrollY.get() > window.innerHeight / 2) {
-        setShowScrollTop(true)
-      } else {
-        setShowScrollTop(false)
-      }
-    }
-
-    const unsubscribe = scrollY.onChange(updateScrollTopButton)
-    return () => unsubscribe()
-  }, [scrollY])
-
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  const backButtonControls = {
-    type: "spring",
-    stiffness: 100,
-    damping: 20,
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-purple-600 to-blue-500">
@@ -92,28 +67,10 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        <Link href="/conversion-calculation" passHref>
-          <motion.button
-            animate={backButtonControls}
-            initial={{ bottom: "32px" }}
-            className="fixed bottom-8 right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-            aria-label="Go back to Conversion and Calculation Tools"
-          >
-            <ArrowLeft size={24} />
-          </motion.button>
-        </Link>
-
-        <motion.button
-          className="fixed bottom-8 left-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: showScrollTop ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={scrollToTop}
-        >
-          <ChevronUp size={24} />
-        </motion.button>
+        <NavigationArrows backLink="/conversion-calculation" />
       </main>
       <Footer />
     </div>
   )
 }
+

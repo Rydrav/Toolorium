@@ -126,25 +126,26 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
           {tools.map((tool) => (
-            <motion.div
-              key={tool.title}
-              whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,255,255,0.3)" }}
-              transition={{ duration: 0.3 }}
-              className="bg-white bg-opacity-20 backdrop-blur-lg rounded-lg p-6 shadow-lg"
-            >
-              <tool.icon className="w-12 h-12 mb-4 text-yellow-300" />
-              <h2 className="text-2xl font-semibold mb-2">{tool.title}</h2>
-              <p className="mb-4 text-sm">{tool.description}</p>
-              <Link href={tool.link} passHref>
-                <motion.button
+            <Link key={tool.title} href={tool.link} passHref>
+              <motion.div
+                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,255,255,0.3)" }}
+                transition={{ duration: 0.3 }}
+                className="bg-white bg-opacity-20 backdrop-blur-lg rounded-lg p-6 shadow-lg cursor-pointer flex flex-col justify-between h-full"
+              >
+                <div>
+                  <tool.icon className="w-12 h-12 mb-4 text-yellow-300" />
+                  <h2 className="text-2xl font-semibold mb-2">{tool.title}</h2>
+                  <p className="mb-4 text-sm">{tool.description}</p>
+                </div>
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-yellow-400 text-purple-900 font-bold py-2 px-4 rounded-full hover:bg-yellow-300 transition-colors duration-300"
+                  className="bg-yellow-400 text-purple-900 font-bold py-2 px-4 rounded-full hover:bg-yellow-300 transition-colors duration-300 text-center"
                 >
                   Explore Tools
-                </motion.button>
-              </Link>
-            </motion.div>
+                </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
 
@@ -162,3 +163,4 @@ export default function Home() {
     </div>
   )
 }
+

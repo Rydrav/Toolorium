@@ -1,59 +1,27 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion, useScroll, useAnimation } from "framer-motion"
-import Link from "next/link"
-import { ChevronUp, ArrowLeft } from "lucide-react"
-import Navbar from "../../../../components/Navbar"
+import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import NavigationArrows from "../../../../components/NavigationArrows"
 import Footer from "../../../../components/Footer"
+import Navbar from "../../../../components//Navbar"
 
 export default function BasicCalculatorPage() {
   const [input, setInput] = useState("")
   const [result, setResult] = useState("")
-  const { scrollY } = useScroll()
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const backButtonControls = useAnimation()
 
+  // Creamos un ref para mantener el valor actualizado de "input"
+  const inputRef = useRef(input)
   useEffect(() => {
-    const updateScrollTopButton = () => {
-      if (scrollY.get() > window.innerHeight / 2) {
-        setShowScrollTop(true)
-      } else {
-        setShowScrollTop(false)
-      }
-    }
+    inputRef.current = input
+  }, [input])
 
-    const unsubscribe = scrollY.onChange(updateScrollTopButton)
-    return () => unsubscribe()
-  }, [scrollY])
-
+  // Hacemos scroll al top al cargar la página
   useEffect(() => {
     window.scrollTo(0, 0)
-    window.addEventListener("keydown", handleKeyDown)
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
   }, [])
 
-  useEffect(() => {
-    const updateButtons = () => {
-      if (scrollY.get() > window.innerHeight / 2) {
-        setShowScrollTop(true)
-        backButtonControls.start({ bottom: "88px", transition: { duration: 0.3 } })
-      } else {
-        setShowScrollTop(false)
-        backButtonControls.start({ bottom: "32px", transition: { duration: 0.3 } })
-      }
-    }
-
-    const unsubscribe = scrollY.onChange(updateButtons)
-    return () => unsubscribe()
-  }, [scrollY, backButtonControls])
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
+  // Función para manejar clics en los botones de la calculadora
   const handleClick = (value) => {
     if (value === "AC") {
       setInput("")
@@ -68,6 +36,7 @@ export default function BasicCalculatorPage() {
       }
     } else {
       setInput((prev) => {
+        // Evitamos múltiples puntos o operadores consecutivos
         if (value === "." && prev.includes(".")) return prev
         if (["+", "-", "*", "/"].includes(value) && ["+", "-", "*", "/"].includes(prev.slice(-1))) {
           return prev.slice(0, -1) + value
@@ -77,6 +46,7 @@ export default function BasicCalculatorPage() {
     }
   }
 
+  // Función para manejar los eventos del teclado
   const handleKeyDown = (event) => {
     const key = event.key
     if (/[0-9+\-*/.=]/.test(key)) {
@@ -85,7 +55,8 @@ export default function BasicCalculatorPage() {
     } else if (key === "Enter") {
       event.preventDefault()
       try {
-        setResult(eval(input).toString())
+        // Usamos inputRef.current para obtener el valor actualizado
+        setResult(eval(inputRef.current).toString())
       } catch (error) {
         setResult("Error")
       }
@@ -97,6 +68,15 @@ export default function BasicCalculatorPage() {
       handleClick("AC")
     }
   }
+
+  // Agregamos el event listener para el teclado una sola vez
+  useEffect(() => {
+    const handleKey = (event) => handleKeyDown(event)
+    window.addEventListener("keydown", handleKey)
+    return () => {
+      window.removeEventListener("keydown", handleKey)
+    }
+  }, [handleKeyDown]) // Added handleKeyDown to dependencies
 
   const buttonClass =
     "w-16 h-16 text-2xl font-bold rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50"
@@ -152,28 +132,10 @@ export default function BasicCalculatorPage() {
           </div>
         </div>
 
-        <Link href="/conversion-calculation/calculator" passHref>
-          <motion.button
-            animate={backButtonControls}
-            initial={{ bottom: "32px" }}
-            className="fixed right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-            aria-label="Go back to Calculator selection"
-          >
-            <ArrowLeft size={24} />
-          </motion.button>
-        </Link>
-
-        <motion.button
-          className="fixed bottom-8 right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: showScrollTop ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={scrollToTop}
-        >
-          <ChevronUp size={24} />
-        </motion.button>
+        <NavigationArrows backLink="/conversion-calculation/calculator" />
       </main>
       <Footer />
     </div>
   )
 }
+

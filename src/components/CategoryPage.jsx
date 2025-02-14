@@ -1,43 +1,16 @@
 "use client"
 
-import { motion, useScroll, useAnimation } from "framer-motion"
+import { motion } from "framer-motion"
 import Link from "next/link"
-import { ChevronUp, ArrowLeft } from "lucide-react"
-import { useEffect, useState } from "react"
-import Navbar from "./Navbar"
-import Footer from "./Footer"
+import { useEffect } from "react"
 
 const CategoryPage = ({ title, description, tools }) => {
-  const { scrollY } = useScroll()
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const backButtonControls = useAnimation()
-
-  useEffect(() => {
-    const updateButtons = () => {
-      if (scrollY.get() > window.innerHeight / 2) {
-        setShowScrollTop(true)
-        backButtonControls.start({ bottom: "88px", transition: { duration: 0.3 } })
-      } else {
-        setShowScrollTop(false)
-        backButtonControls.start({ bottom: "32px", transition: { duration: 0.3 } })
-      }
-    }
-
-    const unsubscribe = scrollY.onChange(updateButtons)
-    return () => unsubscribe()
-  }, [scrollY, backButtonControls])
-
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-purple-600 to-blue-500">
-      <Navbar />
       <main className="flex-grow text-white p-8 relative overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
@@ -73,29 +46,7 @@ const CategoryPage = ({ title, description, tools }) => {
             </Link>
           ))}
         </div>
-
-        <Link href="/" passHref>
-          <motion.button
-            animate={backButtonControls}
-            initial={{ bottom: "32px" }}
-            className="fixed right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-            aria-label="Go back to home page"
-          >
-            <ArrowLeft size={24} />
-          </motion.button>
-        </Link>
-
-        <motion.button
-          className="fixed bottom-8 right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: showScrollTop ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={scrollToTop}
-        >
-          <ChevronUp size={24} />
-        </motion.button>
       </main>
-      <Footer />
     </div>
   )
 }
