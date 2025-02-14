@@ -1,31 +1,43 @@
 "use client"
 
-import { motion, useScroll, useAnimation } from "framer-motion"
+import { motion, useScroll } from "framer-motion"
 import Link from "next/link"
-import { ChevronUp, ArrowLeft } from "lucide-react"
+import { ChevronUp, ArrowLeft, Calculator } from "lucide-react"
 import { useEffect, useState } from "react"
-import Navbar from "./Navbar"
-import Footer from "./Footer"
+import Navbar from "../../../components/Navbar"
+import Footer from "../../../components/Footer"
 
-const CategoryPage = ({ title, description, tools }) => {
+const tools = [
+  {
+    icon: Calculator,
+    title: "Basic Calculator",
+    description: "Perform basic arithmetic operations with ease.",
+    link: "/conversion-calculation/calculator/basic",
+  },
+  {
+    icon: Calculator,
+    title: "Scientific Calculator",
+    description: "Advanced calculations for scientific and engineering needs.",
+    link: "/conversion-calculation/calculator/scientific",
+  },
+]
+
+export default function CalculatorPage() {
   const { scrollY } = useScroll()
   const [showScrollTop, setShowScrollTop] = useState(false)
-  const backButtonControls = useAnimation()
 
   useEffect(() => {
-    const updateButtons = () => {
+    const updateScrollTopButton = () => {
       if (scrollY.get() > window.innerHeight / 2) {
         setShowScrollTop(true)
-        backButtonControls.start({ bottom: "88px", transition: { duration: 0.3 } })
       } else {
         setShowScrollTop(false)
-        backButtonControls.start({ bottom: "32px", transition: { duration: 0.3 } })
       }
     }
 
-    const unsubscribe = scrollY.onChange(updateButtons)
+    const unsubscribe = scrollY.onChange(updateScrollTopButton)
     return () => unsubscribe()
-  }, [scrollY, backButtonControls])
+  }, [scrollY])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -33,6 +45,12 @@ const CategoryPage = ({ title, description, tools }) => {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  const backButtonControls = {
+    type: "spring",
+    stiffness: 100,
+    damping: 20,
   }
 
   return (
@@ -45,11 +63,11 @@ const CategoryPage = ({ title, description, tools }) => {
           transition={{ duration: 0.8 }}
           className="text-center mb-12 relative z-10"
         >
-          <h1 className="text-5xl font-bold mb-4">{title}</h1>
-          <p className="text-xl">{description}</p>
+          <h1 className="text-5xl font-bold mb-4">Online Calculator</h1>
+          <p className="text-xl">Choose between Basic and Scientific calculator</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
           {tools.map((tool) => (
             <Link key={tool.title} href={tool.link} passHref>
               <motion.div
@@ -67,26 +85,26 @@ const CategoryPage = ({ title, description, tools }) => {
                   whileTap={{ scale: 0.95 }}
                   className="bg-yellow-400 text-purple-900 font-bold py-2 px-4 rounded-full hover:bg-yellow-300 transition-colors duration-300 mt-4"
                 >
-                  Use Tool
+                  Use Calculator
                 </motion.button>
               </motion.div>
             </Link>
           ))}
         </div>
 
-        <Link href="/" passHref>
+        <Link href="/conversion-calculation" passHref>
           <motion.button
             animate={backButtonControls}
             initial={{ bottom: "32px" }}
-            className="fixed right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
-            aria-label="Go back to home page"
+            className="fixed bottom-8 right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
+            aria-label="Go back to Conversion and Calculation Tools"
           >
             <ArrowLeft size={24} />
           </motion.button>
         </Link>
 
         <motion.button
-          className="fixed bottom-8 right-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
+          className="fixed bottom-8 left-8 bg-yellow-400 text-purple-900 rounded-full p-3 shadow-lg z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: showScrollTop ? 1 : 0 }}
           transition={{ duration: 0.3 }}
@@ -99,5 +117,3 @@ const CategoryPage = ({ title, description, tools }) => {
     </div>
   )
 }
-
-export default CategoryPage
